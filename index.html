@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Basic Portfolio Tracker</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+      margin-left: 400px;
+    }
+    table {
+      border-collapse: collapse;
+      margin-top: 20px;
+    }
+    th, td {
+      border: 1px solid #ccc;
+      padding: 10px 15px;
+    }
+
+    
+  </style>
+</head>
+<body>
+  <h1>📊 Basic Portfolio Tracker</h1>
+
+  <label for="asset-select">Choose an asset:</label>
+  <select id="asset-select">
+    <option value="">-- Select an Asset --</option>
+    <option value="AAPL">AAPL - Apple Inc.</option>
+    <option value="GOOGL">GOOGL - Alphabet Inc.</option>
+    <option value="TSLA">TSLA - Tesla Inc.</option>
+    <option value="AMZN">AMZN - Amazon.com Inc.</option>
+    <option value="MSFT">MSFT - Microsoft Corporation</option>
+  </select>
+  <button id="button"  onclick="addAsset()">Add to Portfolio</button>
+
+  <h3>Your Portfolio</h3>
+  <table id="portfolio-table">
+    <thead>
+      <tr>
+        <th>Symbol</th>
+        <th>Name</th>
+        <th>Current Price ($)</th>
+      </tr>
+    </thead>
+    <tbody id="portfolio-body">
+      <tr><td colspan="3">No assets in portfolio.</td></tr>
+    </tbody>
+  </table>
+
+  <script>
+    const assets = {
+      AAPL: "Apple Inc.",
+      GOOGL: "Alphabet Inc.",
+      TSLA: "Tesla Inc.",
+      AMZN: "Amazon.com Inc.",
+      MSFT: "Microsoft Corporation"
+    };
+
+    const portfolio = {};
+
+    function getRandomPrice() {
+      return (Math.random() * 1000 + 100).toFixed(2);
+    }
+
+    function addAsset() {
+      const select = document.getElementById("asset-select");
+      const symbol = select.value;
+
+      if (!symbol || portfolio[symbol]) return;
+
+      portfolio[symbol] = {
+        name: assets[symbol],
+        price: parseFloat(getRandomPrice())
+      };
+
+      renderPortfolio();
+    }
+
+    function renderPortfolio() {
+      const tbody = document.getElementById("portfolio-body");
+      tbody.innerHTML = "";
+
+      const keys = Object.keys(portfolio);
+      if (keys.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="3">No assets in portfolio.</td></tr>';
+        return;
+      }
+
+      keys.forEach(symbol => {
+        const row = document.createElement("tr");
+        row.innerHTML = `
+          <td>${symbol}</td>
+          <td>${portfolio[symbol].name}</td>
+          <td id="price-${symbol}">${portfolio[symbol].price.toFixed(2)}</td>
+        `;
+        tbody.appendChild(row);
+      });
+    }
+
+    function simulatePriceChanges() {
+      for (let symbol in portfolio) {
+        const change = (Math.random() - 0.5) * 0.05; // ±2.5%
+        portfolio[symbol].price *= (1 + change);
+        portfolio[symbol].price = parseFloat(portfolio[symbol].price.toFixed(2));
+        const priceCell = document.getElementById(`price-${symbol}`);
+        if (priceCell) {
+          priceCell.textContent = portfolio[symbol].price.toFixed(2);
+        }
+      }
+    }
+
+    setInterval(simulatePriceChanges, 3000);
+  </script>
+</body>
+</html>
